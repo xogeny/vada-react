@@ -13,10 +13,16 @@ import { SimpleStore, RouteState } from 'ts-redux';
 // properties returned by the pmap function.  The key thing is that
 // these properties can be a function of the state of the store AND
 // they will get updated whenever the store value changes.
+//
+// TODO: This currently has React.Props prop types, but I'm not sure
+// it actually works if you put keys on these instances.  Furthermore,
+// I'm not sure it is useful since there are no OTHER props so all
+// instances would be the same.  It might make sense to switch back
+// to a props type of just {} to avoid confusion.
 export function bindClass<P, S>(store: SimpleStore<S>,
                                 elem: React.ComponentClass<P>,
                                 pmap: (s: S) => P, debug?: string)
-: React.ClassicComponentClass<{}> {
+: React.ClassicComponentClass<React.Props<any>> {
     'use strict';
     // A variable that will hold the value of our unsubscribe function once
     // the component is mounted.
@@ -25,8 +31,8 @@ export function bindClass<P, S>(store: SimpleStore<S>,
 
     // This creates a new ClassicComponentClass that renders the Component passed
     // in but also takes care of binding properties.
-    return React.createClass<{}, S>({
-        render(): React.ReactElement<{}> {
+    return React.createClass<React.Props<any>, S>({
+        render(): React.ReactElement<React.Props<any>> {
             // Compute the properties of for this element.
             let props = pmap(this.state);
             // Then create a ReactElement for it with the properties bound.
@@ -75,6 +81,18 @@ export function bindClass<P, S>(store: SimpleStore<S>,
 export interface ProviderProps extends React.Props<void> {
     store: redux.Store<any>;
     routeStore: SimpleStore<RouteState>;
+    debug?: boolean;
+}
+
+export class RouteInfo extends React.Component<RouteState,{}> {
+    render() {
+        let name = this.props.name;
+        let params = this.props.params;
+        let text = "Route: "+name+", Params: "+JSON.stringify(params);
+        return <div>
+            {text}
+        </div>;
+    }
 }
 
 export class Provider extends React.Component<ProviderProps,void> {
@@ -89,7 +107,12 @@ export class Provider extends React.Component<ProviderProps,void> {
 	};
     }
     render() {
-	return <div>{this.props.children}</div>;
+        let Info = bindClass<RouteState, RouteState>(this.props.routeStore, RouteInfo, (s) => s);
+	return (
+                <div>
+                {this.props.debug ? <Info key="foo"/> : null}
+                {this.props.children}
+            </div>);
     }
 }
 
@@ -144,7 +167,7 @@ export class Route extends React.Component<RouteProps, RouteVisibilityState> {
 
     render(): JSX.Element {
 	if (this.state.visible) {
-	    return <div>this.props.children</div>;
+	    return <div>{this.props.children}</div>;
 	} else {
 	    return null;
 	}
