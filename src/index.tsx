@@ -124,11 +124,27 @@ export interface RouteVisibilityState {
     visible: boolean;
 }
 
+export const RouteStoreContext = {
+    routeStore: React.PropTypes.object,
+};
+
+export const ProviderStoreContext = {
+    store: React.PropTypes.object,
+};
+
+export function getRouteStore(c: React.Component<any, any>)
+: redux.Store<RouteState> {
+    return c.context["routeStore"] as redux.Store<RouteState>;
+}
+
+export function getProviderStore<T>(c: React.Component<any, any>)
+: redux.Store<T> {
+    return c.context["store"] as redux.Store<T>;
+}
+
 export class Route extends React.Component<RouteProps, RouteVisibilityState> {
     public unsub: () => void;
-    static contextTypes = {
-	routeStore: React.PropTypes.object,
-    }
+    static contextTypes = RouteStoreContext;
     constructor(props?: RouteProps) {
 	super(props);
 	this.state = {visible: false};
@@ -155,7 +171,8 @@ export class Route extends React.Component<RouteProps, RouteVisibilityState> {
 	this.setState({visible: visible})
     }
     componentDidMount() {
-	var store = this.context["routeStore"] as redux.Store<RouteState>;
+        var store = getRouteStore(this);
+	//var store = this.context["routeStore"] as redux.Store<RouteState>;
 	console.log("Mounting Route for ", this.props.name)
 
 	// Subscribe to the store and record the unsubscribe function
