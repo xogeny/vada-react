@@ -1,7 +1,7 @@
 import React = require('react');
 import redux = require('redux');
 
-import { SimpleStore, RouteState } from 'ts-redux';
+import { SimpleStore, RouteState } from 'vada';
 
 // This is a really useful function.  It is analogous to the connect functionality
 // in react-redux.  But I write it natively in Typescript because I think it is
@@ -82,6 +82,7 @@ export interface ProviderProps extends React.Props<void> {
     store: redux.Store<any>;
     routeStore: SimpleStore<RouteState>;
     debug?: boolean;
+    style?: React.CSSProperties;
 }
 
 export class RouteInfo extends React.Component<RouteState,{}> {
@@ -109,7 +110,7 @@ export class Provider extends React.Component<ProviderProps,void> {
     render() {
         let Info = bindClass<RouteState, RouteState>(this.props.routeStore, RouteInfo, (s) => s);
 	return (
-                <div>
+            <div style={this.props.style}>
                 {this.props.debug ? <Info key="foo"/> : null}
                 {this.props.children}
             </div>);
@@ -118,6 +119,7 @@ export class Provider extends React.Component<ProviderProps,void> {
 
 export interface RouteProps extends React.Props<void>{
     name: string;
+    style?: React.CSSProperties;
 }
 
 export interface RouteVisibilityState {
@@ -184,7 +186,7 @@ export class Route extends React.Component<RouteProps, RouteVisibilityState> {
 
     render(): JSX.Element {
 	if (this.state.visible) {
-	    return <div>{this.props.children}</div>;
+	    return <div style={this.props.style}>{this.props.children}</div>;
 	} else {
 	    return null;
 	}

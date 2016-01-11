@@ -1,7 +1,7 @@
 {
-  "name": "ts-redux-react",
+  "name": "vada-react",
   "version": "0.1.0",
-  "description": "React utilities for ts-redux",
+  "description": "React utilities for vada",
   "main": "js/index.js",
   "typings": "js/index.d.ts",
   "scripts": {
