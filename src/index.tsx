@@ -192,3 +192,18 @@ export class Route extends React.Component<RouteProps, RouteVisibilityState> {
 	}
     }
 }
+
+// This function basically duplicates the capabilties of the
+// `classnames` NPM module by @JedWatson.  I didn't want to add
+// another dependency plus type definitions, just for this.
+// So I just wrote my own.
+export type ClassMap = { [key: string]: boolean };
+export function classnames(cmap: ClassMap): string {
+    var match: string[] = [];
+    for(let k in cmap) {
+        if (cmap[k]) {
+            match.push(k);
+        }
+    }
+    return match.join(" ");
+}
