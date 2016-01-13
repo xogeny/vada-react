@@ -1,7 +1,7 @@
 import React = require('react');
 import redux = require('redux');
 
-import { SimpleStore, RouteState } from 'vada';
+import { SimpleStore, RouteState, RouteId } from 'vada';
 
 // This is a really useful function.  It is analogous to the connect functionality
 // in react-redux.  But I write it natively in Typescript because I think it is
@@ -118,7 +118,7 @@ export class Provider extends React.Component<ProviderProps,void> {
 }
 
 export interface RouteProps extends React.Props<void>{
-    name: string;
+    route: RouteId<any>;
     style?: React.CSSProperties;
 }
 
@@ -155,18 +155,18 @@ export class Route extends React.Component<RouteProps, RouteVisibilityState> {
     componentWillUnmount() {
 	// If the component gets unmounted, unsubscribe from the
 	// store.
-	console.log("Unmounting ", this.props.name);
+	console.log("Unmounting ", this.props.route.id);
 	if (this.unsub!=null) {
 	    this.unsub();
-	    console.log("  Unsubscribed ", this.props.name);
+	    console.log("  Unsubscribed ", this.props.route.id);
 	} else {
-	    console.log("  No subscription for ", this.props.name);
+	    console.log("  No subscription for ", this.props.route.id);
 	}
     }
     update(s: RouteState) {
 	var name = s.name;
-	var visible = name == this.props.name;
-	console.log("  Updating ", this.props.name);
+	var visible = name == this.props.route.id;
+	console.log("  Updating ", this.props.route.id);
 	console.log("    RouteState: ", this.props)
 	console.log("    Current route name: ", name);
 	console.log("    Visible: ", visible)
@@ -175,7 +175,7 @@ export class Route extends React.Component<RouteProps, RouteVisibilityState> {
     componentDidMount() {
         var store = getRouteStore(this);
 	//var store = this.context["routeStore"] as redux.Store<RouteState>;
-	console.log("Mounting Route for ", this.props.name)
+	console.log("Mounting Route for ", this.props.route.id)
 
 	// Subscribe to the store and record the unsubscribe function
 	this.unsub = store.subscribe(() => {
