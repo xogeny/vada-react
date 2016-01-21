@@ -1,6 +1,6 @@
 {
   "name": "vada-react",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "React utilities for vada",
   "main": "js/index.js",
   "typings": "js/index.d.ts",
